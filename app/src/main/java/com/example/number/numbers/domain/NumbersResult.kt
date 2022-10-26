@@ -8,7 +8,7 @@ sealed class NumbersResult {
 
     abstract fun<T>map(mapper: Mapper<T>):T
 
-    class Success(private val list: List<NumberFact>) : NumbersResult(){
+    class Success(private val list: List<NumberFact> = emptyList()) : NumbersResult(){
         override fun <T> map(mapper: Mapper<T>): T {
             return mapper.map(list,"")
         }
