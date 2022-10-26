@@ -7,6 +7,8 @@ import com.example.number.R
 import com.example.number.numbers.presentation.NumbersFragment
 
 class MainActivity : AppCompatActivity(), ShowFragment {
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -37,7 +39,4 @@ interface ShowFragment {
         override fun show(fragment: Fragment) = Unit
 
     }
-}
-interface A{
-    fun a()= Unit
 }

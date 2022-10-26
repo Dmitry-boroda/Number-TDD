@@ -1,5 +1,6 @@
 package com.example.number.numbers.presentation
 
+import com.example.number.numbers.domain.NumbersResult
 import org.junit.Assert.*
 import org.junit.Test
 import java.util.ArrayList
@@ -30,10 +31,10 @@ class ViewModelTest{
         assertEquals(false, communications.progressCallList[0])
 
         assertEquals(1, communications.stateCallList.size)
-        assertEquals(UiState.Success(), communications.stateCallList[0])
+        assertEquals(UiState.Success(emptyList<NumberUi>()), communications.stateCallList[0])
 
         assertEquals(0,communications.numbersList.size)
-        assertEquals(1,communications.timesShowList)
+        assertEquals(0,communications.timesShowList)
 
 
 
@@ -112,7 +113,7 @@ class ViewModelTest{
     }
 
 
-    private class TestNumberCommunication: NumberCommunication{
+    private class TestNumberCommunication: NumbersCommunications{
 
     val progressCallList = mutableListOf<Boolean>()
     val stateCallList = mutableListOf<Boolean>()
