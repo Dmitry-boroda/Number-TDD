@@ -24,11 +24,12 @@ class ViewModelTest{
         //2. action
         viewModel.init(isFirstRun = true)
         //3/check
-        assertEquals(1, communications.progressCallList.size)
         assertEquals(true, communications.progressCallList[0])
+        assertEquals(1, communications.progressCallList.size)
+        assertEquals(true, communications.progressCallList[1])
 
         assertEquals(2, communications.progressCallList.size)
-        assertEquals(false, communications.progressCallList[0])
+        assertEquals(UiState.Success(emptyList<NumberUi>()), communications.progressCallList[0])
 
         assertEquals(1, communications.stateCallList.size)
         assertEquals(UiState.Success(emptyList<NumberUi>()), communications.stateCallList[0])
@@ -39,7 +40,7 @@ class ViewModelTest{
 
 
         interactor.changeExpectedResult(NumberResult.Failure())
-        viewModel.fetchRandomNumberDate()
+        viewModel.fetchRandomNumberFact()
 
 
         assertEquals(3,communications.progressCallList.size)
@@ -70,7 +71,7 @@ class ViewModelTest{
 
         val viewModel = NumberViewModel(communications, interactor)
 
-        viewModel.fechFact("")
+        viewModel.fetchNumberFact("")
 
         assertEquals(0,interactor.fetchAboutNumberCalledList.size)
 
@@ -94,7 +95,7 @@ class ViewModelTest{
 
         interactor.changeExpectedResult(NumbersResult.Success(listOf(Number("45", "random fact about 45"))))
 
-        viewModel.fechFact("45")
+        viewModel.fetchNumberFact("45")
 
         assertEquals(1, communications.progressCallList.size)
         assertEquals(true, communications.progressCallList[0])
