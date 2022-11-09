@@ -16,12 +16,11 @@ abstract class BaseTest {
         }
 
         override fun showState(uiState: UiState) {
-            timesShowList++
             stateCalledList.add(uiState)
-
         }
 
         override fun showList(list: List<NumberUi>) {
+            timesShowList++
             numbersList.addAll(list)
         }
 

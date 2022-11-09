@@ -8,8 +8,7 @@ class NumbersResultMapper(
     private val mapper: NumberFact.Mapper<NumberUi>
 ) : NumbersResult.Mapper<Unit> {
 
-    override fun map(list: List<NumberFact>, errorMessage: String) {
-        communications.showState(
+    override fun map(list: List<NumberFact>, errorMessage: String) = communications.showState(
             if (errorMessage.isEmpty()) {
                 if (list.isNotEmpty())
                     communications.showList(list.map { it.map(mapper) })
@@ -17,5 +16,4 @@ class NumbersResultMapper(
             } else
                 UiState.Error(errorMessage)
         )
-    }
 }
