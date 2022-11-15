@@ -12,11 +12,10 @@ import com.example.number.numbers.domain.NumbersResult
 import kotlinx.coroutines.launch
 
 class NumberViewModel(
-    private val dispatcher: DispatchersList,
+    private val handelResult: HandelNumbersRequest,
     private val managerResources: ManagerResources,
     private val communications: NumbersCommunications,
     private val interactor: NumbersInteractor,
-    private val numbersResultMapper: NumbersResult.Mapper<Unit>
 ) : ViewModel(), FetchNumber, ObserveNumbers {
 
     override fun observeProgress(owner: LifecycleOwner, observer: Observer<Boolean>) =
@@ -30,21 +29,15 @@ class NumberViewModel(
 
     override fun init(isFirstRun: Boolean) {
         if (isFirstRun) {
-            communications.showProgress(true)
-            viewModelScope.launch(dispatcher.io()) {
-                val result = interactor.init()
-                communications.showProgress(false)
-                result.map(numbersResultMapper)
+            handelResult.handel(viewModelScope){
+                interactor.init()
             }
         }
     }
 
     override fun fetchRandomNumberFact() {
-        communications.showProgress(true)
-        viewModelScope.launch(dispatcher.io()) {
-            val result = interactor.factAboutRandomNumber()
-            communications.showProgress(false)
-            result.map(numbersResultMapper)
+        handelResult.handel(viewModelScope){
+            interactor.factAboutRandomNumber()
         }
 
     }
@@ -53,11 +46,8 @@ class NumberViewModel(
         if (number.isEmpty()) {
             communications.showState(UiState.Error(managerResources.string(R.string.empty_number_error_message)))
         } else {
-            communications.showProgress(true)
-            viewModelScope.launch(dispatcher.io()) {
-                val result = interactor.factAboutNumber(number)
-                communications.showProgress(false)
-                result.map(numbersResultMapper)
+            handelResult.handel(viewModelScope){
+                interactor.factAboutNumber(number)
             }
         }
     }

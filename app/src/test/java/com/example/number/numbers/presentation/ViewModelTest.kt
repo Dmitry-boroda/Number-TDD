@@ -41,11 +41,14 @@ class ViewModelTest : BaseTest() {
         testDispatcherList = TestDispatcherList()
         //1. init
         viewModel = NumberViewModel(
-            testDispatcherList,
+            HandelNumbersRequest.Base(
+             TestDispatcherList(),
+             communications,
+             NumbersResultMapper(communications,NumberUiMapper())
+            ),
             managerResources,
             communications,
             interactor,
-            NumbersResultMapper(communications, NumberUiMapper())
         )
 
     }
