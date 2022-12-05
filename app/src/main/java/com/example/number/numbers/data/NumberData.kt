@@ -8,9 +8,14 @@ data class NumberData(
     interface Mapper<T> {
         fun map(id: String, fact: String): T
 
-        class Matches(private val id: String):Mapper<Boolean>{
-            override fun map(id: String, fact: String)= this.id == id
+        class MatchesId(private val id: String) : Mapper<Boolean> {
+            override fun map(id: String, fact: String) = this.id == id
+        }
+
+        class Matches(private val data: NumberData) : Mapper<Boolean> {
+            override fun map(id: String, fact: String): Boolean = data.id == id
         }
     }
+
     fun <T> map(mapper: Mapper<T>): T = mapper.map(id, fact)
 }
