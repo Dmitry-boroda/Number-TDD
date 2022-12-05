@@ -1,6 +1,7 @@
-package com.example.number.numbers.data
+package com.example.number.numbers.data.cloud
 
-import java.net.UnknownHostException
+import com.example.number.numbers.data.NumberData
+import com.example.number.numbers.data.cache.FetchNumber
 
 interface NumbersCloudDataSource : FetchNumber {
 

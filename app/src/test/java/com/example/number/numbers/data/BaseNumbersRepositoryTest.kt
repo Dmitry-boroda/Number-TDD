@@ -1,6 +1,6 @@
 package com.example.number.numbers.data
 
-import com.example.number.numbers.domain.HandleError
+import com.example.number.numbers.data.cloud.NumbersCloudDataSource
 import com.example.number.numbers.domain.NoInternetConnectException
 import com.example.number.numbers.domain.NumberFact
 import com.example.number.numbers.domain.NumbersRepository

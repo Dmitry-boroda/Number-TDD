@@ -2,7 +2,7 @@ package com.example.number.main
 
 import android.app.Application
 import com.example.number.BuildConfig
-import com.example.number.numbers.data.CloudModule
+import com.example.number.numbers.data.cloud.CloudModule
 
 class NumbersApp : Application() {
     override fun onCreate() {

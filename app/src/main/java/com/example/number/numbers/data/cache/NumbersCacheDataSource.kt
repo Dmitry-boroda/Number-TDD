@@ -1,4 +1,6 @@
-package com.example.number.numbers.data
+package com.example.number.numbers.data.cache
+
+import com.example.number.numbers.data.NumberData
 
 interface NumbersCacheDataSource: FetchNumber{
     suspend fun allNumbers(): List<NumberData>
