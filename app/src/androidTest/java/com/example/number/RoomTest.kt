@@ -48,12 +48,12 @@ class RoomTest {
     @Test
     fun test_add_double_times(){
         val number = NumberCache("42","fact42",12)
-        assertEquals(null,dao.number("42"))
         dao.insert(number)
-        val actualList = dao.allNumbers()
+        var actualList = dao.allNumbers()
         assertEquals(number,actualList[0])
         val newNumber = NumberCache("42","fact42",15)
-        dao.update(newNumber)
+        dao.insert(newNumber)
+        actualList = dao.allNumbers()
         assertEquals(1,actualList.size)
         assertEquals(newNumber, actualList[0])
 

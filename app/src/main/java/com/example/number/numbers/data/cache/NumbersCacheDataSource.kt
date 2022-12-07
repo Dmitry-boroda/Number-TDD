@@ -28,11 +28,7 @@ interface NumbersCacheDataSource : FetchNumber {
         }
 
         override suspend fun saveNumber(numberData: NumberData) = mutex.withLock {
-            val number = numberData.map(dataToCache)
-            if (numberData.map(NumberData.Mapper.Matches(numberData)))
-                dao.update(number)
-            else
-                dao.insert(number)
+                dao.insert(numberData.map(dataToCache))
         }
 
         override suspend fun number(number: String): NumberData = mutex.withLock {
