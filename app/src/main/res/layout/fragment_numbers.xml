@@ -6,7 +6,15 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="visible"
+        tools:visibility="gone" />
+
     <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
@@ -27,13 +35,14 @@
         android:text="@string/get_fact" />
 
     <Button
-        android:id="@+id/getRandomButton"
+        android:id="@+id/randomFactButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/margin_small"
         android:text="@string/get_random" />
 
     <androidx.recyclerview.widget.RecyclerView
+        tools:listitem="@layout/number_layout"
         android:id="@+id/historyRecycleView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

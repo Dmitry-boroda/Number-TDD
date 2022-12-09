@@ -1,5 +1,6 @@
 package com.example.number.numbers.presentation
 
+import android.view.View
 import com.example.number.numbers.domain.NumberFact
 import com.example.number.numbers.domain.NumberUiMapper
 import com.example.number.numbers.domain.NumbersInteractor
@@ -42,9 +43,9 @@ class ViewModelTest : BaseTest() {
         //1. init
         viewModel = NumberViewModel(
             HandelNumbersRequest.Base(
-             TestDispatcherList(),
-             communications,
-             NumbersResultMapper(communications,NumberUiMapper())
+                TestDispatcherList(),
+                communications,
+                NumbersResultMapper(communications, NumberUiMapper())
             ),
             managerResources,
             communications,
@@ -67,12 +68,12 @@ class ViewModelTest : BaseTest() {
         //2. action
         viewModel.init(isFirstRun = true)
         //3/check
-        assertEquals(true, communications.progressCalledList[0])
+        assertEquals(View.VISIBLE, communications.progressCalledList[0])
         assertEquals(2, communications.progressCalledList.size)
-        assertEquals(false, communications.progressCalledList[1])
+        assertEquals(View.GONE, communications.progressCalledList[1])
 
         assertEquals(1, communications.stateCalledList.size)
-        assertEquals(UiState.Success(), communications.stateCalledList[0])
+        assertEquals(true, communications.stateCalledList[0] is UiState.Success)
 
         assertEquals(0, communications.numbersList.size)
         assertEquals(0, communications.timesShowList)
@@ -81,15 +82,15 @@ class ViewModelTest : BaseTest() {
         interactor.changeExpectedResult(NumbersResult.Failure("no internet connection"))
         viewModel.fetchRandomNumberFact()
 
-        assertEquals(true, communications.progressCalledList[2])
+        assertEquals(View.VISIBLE, communications.progressCalledList[2])
 
         assertEquals(1, interactor.fetchAboutRandomNumberCalledList.size)
 
         assertEquals(4, communications.progressCalledList.size)
-        assertEquals(false, communications.progressCalledList[3])
+        assertEquals(View.GONE, communications.progressCalledList[3])
 
         assertEquals(2, communications.stateCalledList.size)
-        assertEquals(UiState.Error("no internet connection"), communications.stateCalledList[1])
+        assertEquals(UiState.ShowError("no internet connection"), communications.stateCalledList[1])
         assertEquals(0, communications.timesShowList)
 
         viewModel.init(isFirstRun = false)
@@ -113,7 +114,7 @@ class ViewModelTest : BaseTest() {
 
         assertEquals(1, communications.stateCalledList.size)
 
-        assertEquals(UiState.Error("enter number is empty"), communications.stateCalledList[0])
+        assertEquals(UiState.ShowError("enter number is empty"), communications.stateCalledList[0])
 
         assertEquals(0, communications.timesShowList)
     }
@@ -123,43 +124,36 @@ class ViewModelTest : BaseTest() {
      */
     @Test
     fun `fact about some number`() = runBlocking {
-
-
         interactor.changeExpectedResult(
-            NumbersResult.Success(
-                listOf(
-                    NumberFact(
-                        "45",
-                        "fact about 45"
-                    )
-                )
-            )
+            NumbersResult.Success(listOf(NumberFact("45", "fact about 45")))
         )
 
         viewModel.fetchNumberFact("45")
 
-        assertEquals(true, communications.progressCalledList[0])
+        assertEquals(View.VISIBLE, communications.progressCalledList[0])
 
         assertEquals(1, interactor.fetchAboutNumberCalledList.size)
         assertEquals(
-            NumbersResult.Success(
-                listOf(
-                    NumberFact(
-                        "45",
-                        "fact about 45"
-                    )
-                )
-            ), interactor.fetchAboutNumberCalledList[0]
+            NumbersResult.Success(listOf(NumberFact("45", "fact about 45"))),
+            interactor.fetchAboutNumberCalledList[0]
         )
 
         assertEquals(2, communications.progressCalledList.size)
-        assertEquals(false, communications.progressCalledList[0])
+        assertEquals(View.GONE, communications.progressCalledList[1])
 
         assertEquals(1, communications.stateCalledList.size)
-        assertEquals(UiState.Success(), communications.stateCalledList[0])
+        assertEquals(true, communications.stateCalledList[0] is UiState.Success)
 
         assertEquals(1, communications.timesShowList)
         assertEquals(NumberUi("45", "fact about 45"), communications.numbersList[0])
+    }
+
+    @Test
+    fun `test cleaner error`() {
+        viewModel.clearError()
+
+        assertEquals(1, communications.stateCalledList.size)
+        assertEquals(true, communications.stateCalledList[0] is UiState.ClearError)
     }
 
 

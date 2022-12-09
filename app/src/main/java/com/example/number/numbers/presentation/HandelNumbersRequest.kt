@@ -1,5 +1,6 @@
 package com.example.number.numbers.presentation
 
+import android.view.View
 import androidx.lifecycle.viewModelScope
 import com.example.number.numbers.domain.NumbersResult
 import kotlinx.coroutines.CoroutineScope
@@ -11,19 +12,20 @@ interface HandelNumbersRequest {
         coroutineScope: CoroutineScope,
         block: suspend () -> NumbersResult
     )
+
     class Base(
         private val dispatchers: DispatchersList,
         private val communications: NumbersCommunications,
         private val numbersResultMapper: NumbersResult.Mapper<Unit>,
-    ): HandelNumbersRequest{
+    ) : HandelNumbersRequest {
         override fun handel(
             coroutineScope: CoroutineScope,
             block: suspend () -> NumbersResult
         ) {
-            communications.showProgress(true)
+            communications.showProgress(View.VISIBLE)
             coroutineScope.launch(dispatchers.io()) {
                 val result = block.invoke()
-                communications.showProgress(false)
+                communications.showProgress(View.GONE)
                 result.map(numbersResultMapper)
             }
         }
