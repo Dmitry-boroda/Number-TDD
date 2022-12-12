@@ -3,10 +3,13 @@ package com.example.number.main.presentation
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelStoreOwner
 import com.example.number.R
+import com.example.number.main.sl.ProvideViewModel
 import com.example.number.numbers.presentation.NumbersFragment
 
-class MainActivity : AppCompatActivity(), ShowFragment {
+class MainActivity : AppCompatActivity(), ShowFragment, ProvideViewModel {
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,6 +21,9 @@ class MainActivity : AppCompatActivity(), ShowFragment {
                 .replace(R.id.container, NumbersFragment())
                 .commit()
     }
+
+    override fun <T : ViewModel> provideViewModel(clazz: Class<T>, owner: ViewModelStoreOwner): T =
+        (application as ProvideViewModel).provideViewModel(clazz, owner)
 
     override fun toString(): String {
         return super<AppCompatActivity>.toString()

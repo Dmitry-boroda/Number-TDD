@@ -14,10 +14,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.number.R
 import com.example.number.details.presentation.DetailsFragment
 import com.example.number.main.presentation.ShowFragment
+import com.example.number.main.sl.ProvideViewModel
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
-import org.w3c.dom.Text
-
 
 class NumbersFragment : Fragment() {
 
@@ -37,6 +36,14 @@ class NumbersFragment : Fragment() {
         showFragment = context as ShowFragment
     }
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        viewModel = (requireActivity() as ProvideViewModel).provideViewModel(
+            NumberViewModel::class.java,
+            this
+        )
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -46,11 +53,10 @@ class NumbersFragment : Fragment() {
         val inputLayout = view.findViewById<TextInputLayout>(R.id.textInputLayout)
         val recyclerView = view.findViewById<RecyclerView>(R.id.historyRecycleView)
         val inputEditText = view.findViewById<TextInputEditText>(R.id.editText)
+        val mapper = DetailsUi()
         val adapter = NumbersAdapter(object : ClickListener {
-            override fun click(item: NumberUi) {
-                TODO("Not yet implemented")
-                // showFragment.show(DetailsFragment.newInstance("some information about  the random number"))
-            }
+            override fun click(item: NumberUi) =
+                showFragment.show(DetailsFragment.newInstance(item.map(mapper)))
         })
 
         recyclerView.adapter = adapter
@@ -58,7 +64,7 @@ class NumbersFragment : Fragment() {
         inputEditText.addTextChangedListener(object : SimpleTextWatcher() {
             override fun afterTextChanged(s: Editable?) {
                 super.afterTextChanged(s)
-          viewModel.clearError()
+                viewModel.clearError()
             }
         })
 

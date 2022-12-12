@@ -4,12 +4,11 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 
 @Dao
 interface NumbersDao {
 
-    @Query("SELECT* FROM numbers_table ORDER BY date ASC")
+    @Query("SELECT* FROM numbers_table ORDER BY date DESC")
     fun allNumbers(): List<NumberCache>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
