@@ -3,6 +3,7 @@ package com.example.number.main.sl
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 
+@Suppress("UNCHECKED_CAST")
 class ViewModelsFactory(
     private val dependencyContainer: DependencyContainer
 ) : ViewModelProvider.Factory {
