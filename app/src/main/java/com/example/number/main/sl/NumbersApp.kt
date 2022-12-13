@@ -11,7 +11,15 @@ class NumbersApp : Application(), ProvideViewModel {
     override fun onCreate() {
         super.onCreate()
         viewModelsFactory =
-            ViewModelsFactory(DependencyContainer.Base(Core.Base(this, !BuildConfig.DEBUG)))
+            ViewModelsFactory(
+                DependencyContainer.Base(
+                    Core.Base(
+                        this,
+                        if (BuildConfig.DEBUG) ProvideInstances.Mock(this)
+                        else ProvideInstances.Realise(this)
+                    )
+                )
+            )
     }
 
     override fun <T : ViewModel> provideViewModel(clazz: Class<T>, owner: ViewModelStoreOwner): T =
