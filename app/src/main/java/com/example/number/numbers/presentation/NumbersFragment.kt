@@ -21,14 +21,12 @@ import com.google.android.material.textfield.TextInputLayout
 class NumbersFragment : Fragment() {
 
     private var showFragment: ShowFragment = ShowFragment.Empty()
-    private lateinit var viewModel: NumberViewModel
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_numbers, container, false)
+    private lateinit var viewModel: NumberViewModel
+    private lateinit var inputEditText: TextInputEditText
+
+    private val watcher = object : SimpleTextWatcher() {
+        override fun afterTextChanged(s: Editable?) = viewModel.clearError()
     }
 
     override fun onAttach(context: Context) {
@@ -39,9 +37,16 @@ class NumbersFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewModel = (requireActivity() as ProvideViewModel).provideViewModel(
-            NumberViewModel::class.java,
-            this
+            NumberViewModel::class.java, this
         )
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_numbers, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -51,8 +56,8 @@ class NumbersFragment : Fragment() {
         val factButton = view.findViewById<Button>(R.id.getFactButton)
         val randomButton = view.findViewById<Button>(R.id.randomFactButton)
         val inputLayout = view.findViewById<TextInputLayout>(R.id.textInputLayout)
+        inputEditText = view.findViewById(R.id.editText)
         val recyclerView = view.findViewById<RecyclerView>(R.id.historyRecycleView)
-        val inputEditText = view.findViewById<TextInputEditText>(R.id.editText)
         val mapper = DetailsUi()
         val adapter = NumbersAdapter(object : ClickListener {
             override fun click(item: NumberUi) =
@@ -60,13 +65,6 @@ class NumbersFragment : Fragment() {
         })
 
         recyclerView.adapter = adapter
-
-        inputEditText.addTextChangedListener(object : SimpleTextWatcher() {
-            override fun afterTextChanged(s: Editable?) {
-                super.afterTextChanged(s)
-                viewModel.clearError()
-            }
-        })
 
         factButton.setOnClickListener {
             viewModel.fetchNumberFact(inputEditText.text.toString())
@@ -90,6 +88,15 @@ class NumbersFragment : Fragment() {
 
     }
 
+    override fun onResume() {
+        inputEditText.addTextChangedListener(watcher)
+        super.onResume()
+    }
+
+    override fun onPause() {
+        super.onPause()
+        inputEditText.removeTextChangedListener(watcher)
+    }
     override fun onDetach() {
         super.onDetach()
         showFragment = ShowFragment.Empty()
