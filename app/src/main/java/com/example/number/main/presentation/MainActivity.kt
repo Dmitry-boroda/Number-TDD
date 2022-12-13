@@ -11,30 +11,21 @@ import com.example.number.numbers.presentation.NumbersFragment
 
 class MainActivity : AppCompatActivity(), ShowFragment, ProvideViewModel {
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         if (savedInstanceState == null)
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.container, NumbersFragment())
-                .commit()
+            NavigationStrategy.Replace(NumbersFragment())
+                .navigate(supportFragmentManager, R.id.container)
+    }
+
+    override fun show(fragment: Fragment) {
+        NavigationStrategy.Add(fragment).navigate(supportFragmentManager, R.id.container)
     }
 
     override fun <T : ViewModel> provideViewModel(clazz: Class<T>, owner: ViewModelStoreOwner): T =
         (application as ProvideViewModel).provideViewModel(clazz, owner)
-
-    override fun toString(): String {
-        return super<AppCompatActivity>.toString()
-    }
-
-    override fun show(fragment: Fragment) {
-        supportFragmentManager.beginTransaction()
-            .add(R.id.container, fragment)
-            .addToBackStack(fragment.javaClass.simpleName)
-            .commit()
-    }
 }
 
 interface ShowFragment {
