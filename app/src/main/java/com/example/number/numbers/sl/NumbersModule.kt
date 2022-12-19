@@ -13,8 +13,8 @@ import com.example.number.numbers.data.cloud.NumbersService
 import com.example.number.numbers.domain.*
 import com.example.number.numbers.presentation.*
 
-class NumbersModule(private val core: Core) : Module<NumberViewModel> {
-    override fun viewModel(): NumberViewModel {
+class NumbersModule(private val core: Core) : Module<NumberViewModel.Base> {
+    override fun viewModel(): NumberViewModel.Base {
         val communications = NumbersCommunications.Base(
             ProgressCommunication.Base(),
             NumbersStateCommunication.Base(),
@@ -36,7 +36,7 @@ class NumbersModule(private val core: Core) : Module<NumberViewModel> {
             ),
             NumberDataToDomain()
         )
-        return NumberViewModel(
+        return NumberViewModel.Base(
             HandelNumbersRequest.Base(
                 core.provideDispatchers(),
                 communications,
@@ -49,8 +49,11 @@ class NumbersModule(private val core: Core) : Module<NumberViewModel> {
                 HandleRequest.Base(
                     HandleError.Base(core),
                     numbersRepository
-                )
-            )
+                ),
+                core.provideNumberDetails()
+            ),
+            core.provideNavigation(),
+            DetailsUi()
         )
     }
 }

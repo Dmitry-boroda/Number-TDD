@@ -1,6 +1,7 @@
 package com.example.number.numbers.presentation
 
 import android.view.View
+import com.example.number.main.presentation.NavigationStrategy
 import com.example.number.numbers.domain.NumberFact
 import com.example.number.numbers.domain.NumberUiMapper
 import com.example.number.numbers.domain.NumbersInteractor
@@ -12,13 +13,14 @@ import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Test
 
-class ViewModelTest : BaseTest() {
+class NumbersViewModelTest : BaseTest() {
 
+    private lateinit var navigation: TestNavigationCommunication
     private lateinit var viewModel: NumberViewModel
     private lateinit var communications: TestNumberCommunication
     private lateinit var interactor: TestNumberInteractor
     private lateinit var managerResources: TestManagerResources
-    private lateinit var testDispatcherList: TestDispatcherList
+    private lateinit var detailsMapper: TestUiMapper
 
     @OptIn(DelicateCoroutinesApi::class)
     private val mainThreadSurrogate = newSingleThreadContext("UI tread")
@@ -35,13 +37,13 @@ class ViewModelTest : BaseTest() {
     fun init() {
 
         Dispatchers.setMain(mainThreadSurrogate)
-
+        navigation = TestNavigationCommunication()
         communications = TestNumberCommunication()
         interactor = TestNumberInteractor()
         managerResources = TestManagerResources()
-        testDispatcherList = TestDispatcherList()
         //1. init
-        viewModel = NumberViewModel(
+        detailsMapper = TestUiMapper()
+        viewModel = NumberViewModel.Base(
             HandelNumbersRequest.Base(
                 TestDispatcherList(),
                 communications,
@@ -50,6 +52,8 @@ class ViewModelTest : BaseTest() {
             managerResources,
             communications,
             interactor,
+            navigation,
+            detailsMapper
         )
 
     }
@@ -156,6 +160,14 @@ class ViewModelTest : BaseTest() {
         assertEquals(true, communications.stateCalledList[0] is UiState.ClearError)
     }
 
+    @Test
+    fun `test navigation details`() {
+        viewModel.showDetails(NumberUi("0", "fact"))
+        assertEquals("0 fact", interactor.details)
+        assertEquals(1, navigation.count)
+        assertEquals(true, navigation.strategy is NavigationStrategy.Add)
+    }
+
 
     private class TestManagerResources : ManagerResources {
 
@@ -180,9 +192,14 @@ class ViewModelTest : BaseTest() {
 
         val fetchAboutNumberCalledList = mutableListOf<NumbersResult>()
         val fetchAboutRandomNumberCalledList = mutableListOf<NumbersResult>()
+        var details: String = ""
 
         fun changeExpectedResult(newResult: NumbersResult) {
             result = newResult
+        }
+
+        override fun saveDetails(details: String) {
+            this.details = details
         }
 
 
@@ -203,16 +220,14 @@ class ViewModelTest : BaseTest() {
         }
     }
 
-    private class TestDispatcherList : DispatchersList {
-        @OptIn(ExperimentalCoroutinesApi::class)
-        override fun io(): CoroutineDispatcher {
-            return TestCoroutineDispatcher()
-        }
+    private class TestDispatcherList(
+        private val dispatcher: CoroutineDispatcher = TestCoroutineDispatcher()
+    ) : DispatchersList {
+        override fun io(): CoroutineDispatcher = dispatcher
+        override fun ui(): CoroutineDispatcher = dispatcher
+    }
 
-        @OptIn(ExperimentalCoroutinesApi::class)
-        override fun ui(): CoroutineDispatcher {
-            return TestCoroutineDispatcher()
-        }
-
+    private class TestUiMapper : NumberUi.Mapper<String> {
+        override fun map(id: String, fact: String): String = "$id $fact"
     }
 }

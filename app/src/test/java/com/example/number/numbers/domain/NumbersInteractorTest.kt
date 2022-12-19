@@ -1,5 +1,6 @@
 package com.example.number.numbers.domain
 
+import com.example.number.details.data.NumberFactDetails
 import com.example.number.numbers.presentation.ManagerResources
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.*
@@ -10,7 +11,7 @@ class NumbersInteractorTest {
 
     private lateinit var interactor: NumbersInteractor
     private lateinit var repository: TestNumbersRepository
-    private lateinit var managerResource : TestManagerResources
+    private lateinit var managerResource: TestManagerResources
 
     @Before
     fun setUp() {
@@ -18,7 +19,9 @@ class NumbersInteractorTest {
         repository = TestNumbersRepository()
         interactor = NumbersInteractor.Base(
             repository,
-            HandleRequest.Base(HandleError.Base(managerResource),repository))
+            HandleRequest.Base(HandleError.Base(managerResource), repository),
+            NumberFactDetails.Base()
+        )
     }
 
     @Test
@@ -130,13 +133,15 @@ class NumbersInteractorTest {
         }
 
     }
-private class TestManagerResources: ManagerResources{
 
-    private var value = ""
-    fun changeExpected(string: String){
-        value = string
+    private class TestManagerResources : ManagerResources {
+
+        private var value = ""
+        fun changeExpected(string: String) {
+            value = string
+        }
+
+        override fun string(id: Int): String = value
+
     }
-    override fun string(id: Int): String = value
-
-}
 }

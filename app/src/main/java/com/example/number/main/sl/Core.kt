@@ -1,13 +1,16 @@
 package com.example.number.main.sl
 
 import android.content.Context
+import com.example.number.details.data.NumberFactDetails
+import com.example.number.main.presentation.NavigationCommunication
 import com.example.number.numbers.data.cache.CacheModule
 import com.example.number.numbers.data.cache.NumbersDataBase
 import com.example.number.numbers.data.cloud.CloudModule
 import com.example.number.numbers.presentation.DispatchersList
 import com.example.number.numbers.presentation.ManagerResources
 
-interface Core : CloudModule, CacheModule, ManagerResources {
+interface Core : CloudModule, CacheModule, ManagerResources, ProvideNavigation,
+    ProvideNumberDetails {
 
     fun provideDispatchers(): DispatchersList
 
@@ -15,6 +18,8 @@ interface Core : CloudModule, CacheModule, ManagerResources {
         context: Context,
         private val providerInstances: ProvideInstances,
     ) : Core {
+        private val numberDetails = NumberFactDetails.Base()
+        private val navigationCommunication = NavigationCommunication.Bass()
         private val managerResources: ManagerResources = ManagerResources.Base(context)
         private val dispatchersList by lazy {
             DispatchersList.Base()
@@ -31,6 +36,17 @@ interface Core : CloudModule, CacheModule, ManagerResources {
         override fun provideDataBase(): NumbersDataBase = cacheModule.provideDataBase()
 
         override fun string(id: Int): String = managerResources.string(id)
+        override fun provideNavigation(): NavigationCommunication.Mutable = navigationCommunication
+        override fun provideNumberDetails(): NumberFactDetails.Mutable = numberDetails
+
         override fun provideDispatchers(): DispatchersList = dispatchersList
     }
+}
+
+interface ProvideNavigation {
+    fun provideNavigation(): NavigationCommunication.Mutable
+}
+
+interface ProvideNumberDetails {
+    fun provideNumberDetails(): NumberFactDetails.Mutable
 }
