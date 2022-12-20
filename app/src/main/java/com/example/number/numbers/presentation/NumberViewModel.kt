@@ -6,10 +6,10 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.number.R
-import com.example.number.details.presentation.NumberDetailsFragment
 import com.example.number.main.presentation.Init
 import com.example.number.main.presentation.NavigationCommunication
 import com.example.number.main.presentation.NavigationStrategy
+import com.example.number.main.presentation.Screen
 import com.example.number.numbers.domain.NumbersInteractor
 
 interface NumberViewModel : Init, FetchNumber, ObserveNumbers, ClearError {
@@ -64,8 +64,7 @@ interface NumberViewModel : Init, FetchNumber, ObserveNumbers, ClearError {
         override fun clearError() = communications.showState(UiState.ClearError())
         override fun showDetails(item: NumberUi) {
             interactor.saveDetails(item.map(detailsMapper))
-            navigationCommunication.map(
-                NavigationStrategy.Add(NumberDetailsFragment())
+            navigationCommunication.map(NavigationStrategy.Add(Screen.Details)
             )
         }
     }

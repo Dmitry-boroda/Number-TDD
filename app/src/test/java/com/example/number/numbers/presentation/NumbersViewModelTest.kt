@@ -2,6 +2,7 @@ package com.example.number.numbers.presentation
 
 import android.view.View
 import com.example.number.main.presentation.NavigationStrategy
+import com.example.number.main.presentation.Screen
 import com.example.number.numbers.domain.NumberFact
 import com.example.number.numbers.domain.NumberUiMapper
 import com.example.number.numbers.domain.NumbersInteractor
@@ -165,7 +166,7 @@ class NumbersViewModelTest : BaseTest() {
         viewModel.showDetails(NumberUi("0", "fact"))
         assertEquals("0 fact", interactor.details)
         assertEquals(1, navigation.count)
-        assertEquals(true, navigation.strategy is NavigationStrategy.Add)
+        assertEquals(NavigationStrategy.Add(Screen.Details), navigation.strategy)
     }
 
 
