@@ -22,12 +22,12 @@ interface NavigationStrategy {
         ): FragmentTransaction
     }
 
-    class Replace(override val screen: Screen) : Abstract(screen) {
+    data class Replace(override val screen: Screen) : Abstract(screen) {
         override fun FragmentTransaction.executeTransaction(containerId: Int): FragmentTransaction =
             replace(containerId, screen.fragment().newInstance())
     }
 
-    class Add(override val screen: Screen) : Abstract(screen) {
+    data class Add(override val screen: Screen) : Abstract(screen) {
         override fun FragmentTransaction.executeTransaction(containerId: Int): FragmentTransaction =
             screen.fragment().let {
                 add(containerId, it.newInstance()).addToBackStack(it.simpleName)
