@@ -13,29 +13,18 @@ import com.example.number.numbers.data.cloud.NumbersService
 import com.example.number.numbers.domain.*
 import com.example.number.numbers.presentation.*
 
-class NumbersModule(private val core: Core) : Module<NumberViewModel.Base> {
+class NumbersModule(
+    private val core: Core,
+    private val provideRepository: ProvideNumbersRepository
+) : Module<NumberViewModel.Base> {
     override fun viewModel(): NumberViewModel.Base {
+        val repository = provideRepository.provideRepository()
         val communications = NumbersCommunications.Base(
             ProgressCommunication.Base(),
             NumbersStateCommunication.Base(),
             NumbersListCommunication.Base(),
         )
-        val cacheDataSource = NumbersCacheDataSource.Base(
-            core.provideDataBase().numbersDao(),
-            NumberDataToCache()
-        )
-        val numbersRepository = BaseNumbersRepository(
-            NumbersCloudDataSource.Base(
-                core.service(NumbersService::class.java)
-            ),
-            cacheDataSource,
-            HandleDataRequest.Base(
-                cacheDataSource,
-                NumberDataToDomain(),
-                HandleDomainError()
-            ),
-            NumberDataToDomain()
-        )
+
         return NumberViewModel.Base(
             HandelNumbersRequest.Base(
                 core.provideDispatchers(),
@@ -45,15 +34,40 @@ class NumbersModule(private val core: Core) : Module<NumberViewModel.Base> {
             core,
             communications,
             NumbersInteractor.Base(
-                numbersRepository,
+                repository,
                 HandleRequest.Base(
                     HandleError.Base(core),
-                    numbersRepository
+                    repository
                 ),
                 core.provideNumberDetails()
             ),
             core.provideNavigation(),
             DetailsUi()
         )
+    }
+}
+
+interface ProvideNumbersRepository {
+    fun provideRepository(): NumbersRepository
+    class Base(private val core: Core) : ProvideNumbersRepository {
+        override fun provideRepository(): NumbersRepository {
+            val cacheDataSource = NumbersCacheDataSource.Base(
+                core.provideDataBase().numbersDao(),
+                NumberDataToCache()
+            )
+            return BaseNumbersRepository(
+                NumbersCloudDataSource.Base(
+                    core.service(NumbersService::class.java)
+                ),
+                cacheDataSource,
+                HandleDataRequest.Base(
+                    cacheDataSource,
+                    NumberDataToDomain(),
+                    HandleDomainError()
+                ),
+                NumberDataToDomain()
+            )
+        }
+
     }
 }

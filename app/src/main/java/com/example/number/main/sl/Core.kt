@@ -8,9 +8,10 @@ import com.example.number.numbers.data.cache.NumbersDataBase
 import com.example.number.numbers.data.cloud.CloudModule
 import com.example.number.numbers.presentation.DispatchersList
 import com.example.number.numbers.presentation.ManagerResources
+import com.example.number.random.WorkManagerWrapper
 
 interface Core : CloudModule, CacheModule, ManagerResources, ProvideNavigation,
-    ProvideNumberDetails {
+    ProvideNumberDetails, ProvideWorkManagerWrapper {
 
     fun provideDispatchers(): DispatchersList
 
@@ -18,6 +19,7 @@ interface Core : CloudModule, CacheModule, ManagerResources, ProvideNavigation,
         context: Context,
         private val providerInstances: ProvideInstances,
     ) : Core {
+        private val workManagerWrapper: WorkManagerWrapper = WorkManagerWrapper.Base(context)
         private val numberDetails = NumberFactDetails.Base()
         private val navigationCommunication = NavigationCommunication.Bass()
         private val managerResources: ManagerResources = ManagerResources.Base(context)
@@ -38,9 +40,14 @@ interface Core : CloudModule, CacheModule, ManagerResources, ProvideNavigation,
         override fun string(id: Int): String = managerResources.string(id)
         override fun provideNavigation(): NavigationCommunication.Mutable = navigationCommunication
         override fun provideNumberDetails(): NumberFactDetails.Mutable = numberDetails
+        override fun provideWorkManagerWrapper() = workManagerWrapper
 
         override fun provideDispatchers(): DispatchersList = dispatchersList
     }
+}
+
+interface ProvideWorkManagerWrapper {
+    fun provideWorkManagerWrapper(): WorkManagerWrapper
 }
 
 interface ProvideNavigation {
